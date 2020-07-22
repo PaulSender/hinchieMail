@@ -10,8 +10,8 @@ router.use(
 );
 var transporter = nodemailer.createTransport({
   host: "whatever.com",
-  port: 465, //Important Mailer Port
-  secure: true,
+  port: 587, //Important Mailer Port
+  secure: false,
   tls: {
     rejectUnauthorized: false //Won't throw you any cert errors
   },
@@ -22,14 +22,27 @@ var transporter = nodemailer.createTransport({
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
   const exampleData = {
     name: "Meet",
-    email:"catfoodlover123@gmail.com",
+    email:"paulsender99@gmail.com",
     subject: "no",
     message: "nonononononononononononononononono"
   }
-  res.render('index', { title: 'Express' });
+  try {
+    let info = await transporter.sendMail({
+      from: `"${exampleData.name}" <${exampleData.email}>`, // sender address
+      to: "senderp@wit.edu.com", // list of receivers comma seperated
+      subject: `${exampleData.subject}`, // Subject line
+      text: `${exampleData.message}`, // plain text body
+    });
+    res.render('index', { title: info.messageId });
+  }
+  catch(e) {
+    console.log(e)
+  }
+  
+  
 });
 
 module.exports = router;
